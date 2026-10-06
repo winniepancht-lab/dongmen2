@@ -1,20 +1,32 @@
-<!doctype html>
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none';">
-  <title>各式章程｜東門國小家長會</title>
-  <link rel="stylesheet" href="../assets/css/site.css">
+    <meta charset="UTF-8">
+    <title>各式章程</title>
+    <style>
+        body { font-family: sans-serif; padding: 30px 20px; background-color: transparent; margin: 0; }
+        .list-container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
+        .rule-card { background: #fff; padding: 20px 25px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; border-left: 6px solid #4caf50; transition: all 0.2s; }
+        .rule-card:hover { border-left-color: #ff9800; background: #fdfdfd; }
+        .title { font-size: 16px; color: #333; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .title::before { content: "📄"; font-size: 18px; }
+        .dl-btn { background: transparent; color: #ff9800; border: 2px solid #ff9800; text-decoration: none; padding: 6px 18px; border-radius: 4px; font-size: 14px; font-weight: bold; transition: all 0.2s; white-space: nowrap; }
+        .dl-btn:hover { background: #ff9800; color: white; }
+    </style>
 </head>
-<body class="page-body rules-body">
-  <a class="skip-link" href="#rules-main">跳至主要內容</a>
-  <main id="rules-main" class="page-wrap">
-    <header class="page-header"><div><div class="eyebrow">東門國小學生家長會</div><h1>各式章程</h1><p>保留新版自動掃描檔案的架構，連結則改為舊版清楚的卡片式操作。</p></div></header>
-    <div class="rules-list" id="rules-list"></div>
-    <p class="rule-note">檔案連結會以新分頁開啟，並加入安全的 opener/referrer 控制。</p>
-  </main>
-  <script src="../data.js" defer></script>
-  <script src="../assets/js/rules.js" defer></script>
+<body>
+    <div class="list-container" id="rules-list"></div>
+    <script src="../data.js"></script>
+    <script>
+        const container = document.getElementById('rules-list');
+        RULES_DATABASE.forEach(item => {
+            container.innerHTML += `
+                <div class="rule-card">
+                    <div class="title">${item.title}</div>
+                    <a href="${item.file}" target="_blank" class="dl-btn">閱讀條文</a>
+                </div>
+            `;
+        });
+    </script>
 </body>
 </html>
