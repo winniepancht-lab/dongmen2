@@ -1,0 +1,36 @@
+name: Auto Update Data.js
+
+# 觸發條件：當 files 或 issues 資料夾內有檔案變動並推送到 main 分支時
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'files/**'
+      - 'issues/**'
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 下載你的程式碼
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. 安裝 Python 環境
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # 3. 執行剛剛寫好的自動化腳本
+      - name: Run auto_update.py
+        run: python auto_update.py
+
+      # 4. 將自動更新後的 data.js 存檔並推回 GitHub
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "🤖 自動更新 data.js (由 GitHub Actions 執行)"
+          file_pattern: 'data.js'
