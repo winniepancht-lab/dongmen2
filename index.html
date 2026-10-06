@@ -1,28 +1,56 @@
-<!doctype html>
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none';">
-  <title>東門國小學生家長會　會務資訊</title>
-  <link rel="stylesheet" href="assets/css/site.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>臺北市東門國小家長會</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Helvetica Neue', Arial, 'LiHei Pro', sans-serif; overflow: hidden; background-color: #f4f6f8; }
+        
+        /* 頂部極簡導覽列 */
+        .top-navbar { background-color: #122235; display: flex; justify-content: space-between; align-items: flex-end; padding: 0 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); position: relative; z-index: 10; height: 50px; }
+        .nav-tabs { display: flex; gap: 5px; height: 100%; }
+        .nav-tabs button { background-color: #1c3652; color: #a0b2c6; border: none; padding: 0 25px; border-radius: 6px 6px 0 0; cursor: pointer; font-size: 16px; font-weight: bold; height: 42px; margin-top: auto; transition: all 0.2s; }
+        .nav-tabs button:hover { background-color: #274769; color: white; }
+        .nav-tabs button.active { background-color: #f4f6f8; color: #122235; height: 50px; } /* 作用中變成白色底 */
+        
+        .nav-right { color: #a0b2c6; font-size: 14px; margin-bottom: 15px; font-weight: bold; }
+        .nav-right span { color: white; margin-left: 10px; }
+
+        /* 內容載入區 */
+        .content-container { height: calc(100% - 50px); width: 100%; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; display: none; }
+        iframe.active { display: block; }
+    </style>
 </head>
 <body>
-  <a class="skip-link" href="#main-content">跳至主要內容</a>
-  <nav class="top-nav" role="tablist" aria-label="家長會網站功能">
-    <button type="button" role="tab" id="tab-minutes" aria-selected="true" aria-controls="panel-minutes" data-tab="minutes">會議紀錄查詢</button>
-    <button type="button" role="tab" id="tab-newsletter" aria-selected="false" aria-controls="panel-newsletter" data-tab="newsletter">會訊線上閱讀</button>
-    <button type="button" role="tab" id="tab-donors" aria-selected="false" aria-controls="panel-donors" data-tab="donors">捐款芳名錄</button>
-    <button type="button" role="tab" id="tab-rules" aria-selected="false" aria-controls="panel-rules" data-tab="rules">各式章程</button>
-    <span class="site-label">東門國小家長會　114學年度</span>
-  </nav>
-  <main id="main-content" class="content-shell">
-    <iframe id="panel-minutes" title="會議紀錄查詢" role="tabpanel" src="pages/minutes.html" loading="eager" referrerpolicy="no-referrer"></iframe>
-    <iframe id="panel-newsletter" title="會訊線上閱讀" role="tabpanel" data-src="pages/newsletter.html" loading="lazy" hidden referrerpolicy="no-referrer"></iframe>
-    <iframe id="panel-donors" title="捐款芳名錄" role="tabpanel" data-src="pages/donors.html" loading="lazy" hidden referrerpolicy="no-referrer"></iframe>
-    <iframe id="panel-rules" title="各式章程" role="tabpanel" data-src="pages/rules.html" loading="lazy" hidden referrerpolicy="no-referrer"></iframe>
-  </main>
-  <script src="data.js" defer></script>
-  <script src="assets/js/index.js" defer></script>
+    <div class="top-navbar">
+        <div class="nav-tabs">
+            <button onclick="switchTab(this, 'frame-minutes')" class="active">會議紀錄查詢</button>
+            <button onclick="switchTab(this, 'frame-newsletter')">會訊線上閱讀</button>
+            <button onclick="switchTab(this, 'frame-donors')">捐款芳名錄</button>
+            <!-- 新增各式章程的頁籤 -->
+            <button onclick="switchTab(this, 'frame-rules')">各式章程</button>
+        </div>
+        <div class="nav-right">東門國小家長會 <span>114學年度</span></div>
+    </div>
+
+    <div class="content-container">
+        <!-- 統一子頁面檔案名稱與路徑 -->
+        <iframe id="frame-minutes" src="pages/minutes.html" class="active"></iframe>
+        <iframe id="frame-newsletter" src="pages/newsletter.html"></iframe>
+        <iframe id="frame-donors" src="pages/donors.html"></iframe>
+        <!-- 新增各式章程的 iframe -->
+        <iframe id="frame-rules" src="pages/rules.html"></iframe>
+    </div>
+
+    <script>
+        function switchTab(btn, frameId) {
+            document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
+            document.getElementById(frameId).classList.add('active');
+        }
+    </script>
 </body>
 </html>
