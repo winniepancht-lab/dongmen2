@@ -1,59 +1,21 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
+<!doctype html>
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <title>捐款芳名錄</title>
-    <style>
-        body { font-family: sans-serif; padding: 30px 20px; background-color: transparent; margin: 0; }
-        .container { max-width: 900px; margin: 0 auto; }
-        
-        details { background: #fff; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e0e0e0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        summary { padding: 16px 20px; font-size: 18px; font-weight: bold; background-color: #fff3e0; color: #e65100; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; transition: background-color 0.2s; border-left: 5px solid #ff9800; }
-        summary:hover { background-color: #ffe0b2; }
-        summary::-webkit-details-marker { display: none; }
-        summary::after { content: "▼"; font-size: 14px; color: #e65100; transition: transform 0.3s; }
-        details[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: 1px solid #ffe0b2; }
-        details[open] summary::after { transform: rotate(180deg); }
-        
-        .content-area { padding: 10px 20px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
-        .donor-card { background: #fafafa; border: 1px solid #eee; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
-        .donor-card:hover { transform: translateY(-3px); border-color: #ffcc80; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .donor-title { font-size: 16px; color: #333; font-weight: bold; margin-bottom: 15px; line-height: 1.4; }
-        .dl-link { align-self: flex-start; color: #bf360c; text-decoration: none; font-weight: bold; background: #fff8e1; padding: 6px 15px; border-radius: 4px; font-size: 13px; border: 1px solid #ffe0b2; transition: all 0.2s; }
-        .dl-link:hover { background: #ffcc80; }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none';">
+  <title>捐款芳名錄｜東門國小家長會</title>
+  <link rel="stylesheet" href="../assets/css/site.css">
 </head>
-<body>
-    <div class="container" id="accordion-container"></div>
-    <script src="../data.js"></script>
-    <script>
-        const container = document.getElementById('accordion-container');
-        
-        // 1. 依「year」(學年度) 分組
-        const groups = {};
-        DONORS_DATABASE.forEach(item => {
-            const yearGroup = item.year || "其他";
-            if (!groups[yearGroup]) groups[yearGroup] = [];
-            groups[yearGroup].push(item);
-        });
-
-        // 2. 渲染折疊面板 (內部使用卡片網格排列)
-        Object.keys(groups).sort((a, b) => b.localeCompare(a)).forEach((year, index) => {
-            const isOpen = index === 0 ? "open" : ""; // 預設展開第一組
-            let itemsHtml = groups[year].map(item => `
-                <div class="donor-card">
-                    <div class="donor-title">💝 ${item.title}</div>
-                    <a href="${item.file}" target="_blank" class="dl-link">查看芳名錄</a>
-                </div>
-            `).join('');
-
-            container.innerHTML += `
-                <details ${isOpen}>
-                    <summary>${year} 芳名錄</summary>
-                    <div class="content-area">${itemsHtml}</div>
-                </details>
-            `;
-        });
-    </script>
+<body class="page-body donor-body">
+  <a class="skip-link" href="#donor-main">跳至主要內容</a>
+  <main id="donor-main" class="page-wrap">
+    <header class="page-header"><div><div class="eyebrow">東門國小學生家長會</div><h1>捐款芳名錄</h1><p id="donor-intro">沿用舊版分頁、原圖檢視與指定用途文字查詢；原圖為正式依據。</p></div><div class="stats" id="donor-stats"></div></header>
+    <nav id="donor-tabs" class="donor-tabs" role="tablist" aria-label="捐款類別"></nav>
+    <section id="donor-panel" role="tabpanel" aria-live="polite"></section>
+  </main>
+  <script src="../data.js" defer></script>
+  <script src="../data/donor_legacy.js" defer></script>
+  <script src="../assets/js/donors.js" defer></script>
 </body>
 </html>
