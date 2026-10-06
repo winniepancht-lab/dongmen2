@@ -29,14 +29,19 @@
             <button onclick="switchTab(this, 'frame-minutes')" class="active">會議紀錄查詢</button>
             <button onclick="switchTab(this, 'frame-newsletter')">會訊線上閱讀</button>
             <button onclick="switchTab(this, 'frame-donors')">捐款芳名錄</button>
+            <!-- 新增各式章程的頁籤 -->
+            <button onclick="switchTab(this, 'frame-rules')">各式章程</button>
         </div>
         <div class="nav-right">東門國小家長會 <span>114學年度</span></div>
     </div>
 
     <div class="content-container">
+        <!-- 統一子頁面檔案名稱與路徑 -->
         <iframe id="frame-minutes" src="pages/minutes.html" class="active"></iframe>
         <iframe id="frame-newsletter" src="pages/newsletter.html"></iframe>
         <iframe id="frame-donors" src="pages/donors.html"></iframe>
+        <!-- 新增各式章程的 iframe -->
+        <iframe id="frame-rules" src="pages/rules.html"></iframe>
     </div>
 
     <script>
