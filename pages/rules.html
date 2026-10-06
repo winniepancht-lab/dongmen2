@@ -5,28 +5,47 @@
     <title>各式章程</title>
     <style>
         body { font-family: sans-serif; padding: 30px 20px; background-color: transparent; margin: 0; }
-        .list-container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
-        .rule-card { background: #fff; padding: 20px 25px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; border-left: 6px solid #4caf50; transition: all 0.2s; }
-        .rule-card:hover { border-left-color: #ff9800; background: #fdfdfd; }
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        details { background: #fff; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e0e0e0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        summary { padding: 16px 20px; font-size: 18px; font-weight: bold; background-color: #e8f5e9; color: #1b5e20; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; transition: background-color 0.2s; border-left: 5px solid #4caf50; }
+        summary:hover { background-color: #c8e6c9; }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: "▼"; font-size: 14px; color: #1b5e20; transition: transform 0.3s; }
+        details[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: 1px solid #c8e6c9; }
+        details[open] summary::after { transform: rotate(180deg); }
+        
+        .content-area { padding: 10px 20px; }
+        .rule-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px dashed #ddd; transition: all 0.2s; }
+        .rule-row:last-child { border-bottom: none; }
+        .rule-row:hover { background-color: #fafafa; padding-left: 10px; padding-right: 10px; margin: 0 -10px; border-radius: 4px; }
         .title { font-size: 16px; color: #333; font-weight: bold; display: flex; align-items: center; gap: 10px; }
         .title::before { content: "📄"; font-size: 18px; }
-        .dl-btn { background: transparent; color: #ff9800; border: 2px solid #ff9800; text-decoration: none; padding: 6px 18px; border-radius: 4px; font-size: 14px; font-weight: bold; transition: all 0.2s; white-space: nowrap; }
-        .dl-btn:hover { background: #ff9800; color: white; }
+        .dl-btn { background: transparent; color: #4caf50; border: 2px solid #4caf50; text-decoration: none; padding: 6px 18px; border-radius: 4px; font-size: 14px; font-weight: bold; transition: all 0.2s; white-space: nowrap; }
+        .dl-btn:hover { background: #4caf50; color: white; }
     </style>
 </head>
 <body>
-    <div class="list-container" id="rules-list"></div>
+    <div class="container" id="accordion-container"></div>
     <script src="../data.js"></script>
     <script>
-        const container = document.getElementById('rules-list');
-        RULES_DATABASE.forEach(item => {
-            container.innerHTML += `
-                <div class="rule-card">
-                    <div class="title">${item.title}</div>
-                    <a href="${item.file}" target="_blank" class="dl-btn">閱讀條文</a>
-                </div>
-            `;
-        });
+        const container = document.getElementById('accordion-container');
+        
+        // 產生章程列表 HTML
+        let itemsHtml = RULES_DATABASE.map(item => `
+            <div class="rule-row">
+                <div class="title">${item.title}</div>
+                <a href="${item.file}" target="_blank" class="dl-btn">閱讀條文</a>
+            </div>
+        `).join('');
+
+        // 建立一個預設展開的折疊面板包裹所有章程
+        container.innerHTML = `
+            <details open>
+                <summary>現行組織與管理辦法</summary>
+                <div class="content-area">${itemsHtml}</div>
+            </details>
+        `;
     </script>
 </body>
 </html>
