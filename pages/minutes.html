@@ -5,29 +5,62 @@
     <title>會議紀錄</title>
     <style>
         body { font-family: sans-serif; padding: 30px 20px; background-color: transparent; margin: 0; }
-        .list-container { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden; }
-        .list-row { display: flex; align-items: center; padding: 15px 20px; border-bottom: 1px dashed #ddd; transition: background 0.2s; }
-        .list-row:nth-child(even) { background-color: #fafafa; }
-        .list-row:hover { background-color: #fff3e0; } 
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        /* 折疊面板樣式 */
+        details { background: #fff; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e0e0e0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        summary { padding: 16px 20px; font-size: 18px; font-weight: bold; background-color: #f8f9fa; color: #122235; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; transition: background-color 0.2s; }
+        summary:hover { background-color: #eef1f5; }
+        summary::-webkit-details-marker { display: none; } /* 隱藏預設箭頭 */
+        summary::after { content: "▼"; font-size: 14px; color: #666; transition: transform 0.3s; }
+        details[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: 1px solid #e0e0e0; background-color: #e8ebef; }
+        details[open] summary::after { transform: rotate(180deg); }
+        
+        /* 列表樣式 */
+        .content-area { padding: 5px 20px; }
+        .list-row { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px dashed #ddd; transition: background 0.2s; }
         .list-row:last-child { border-bottom: none; }
-        .date-badge { background: #e8f5e9; color: #2e7d32; padding: 5px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; margin-right: 20px; border: 1px solid #c8e6c9; }
-        .title { flex-grow: 1; font-size: 16px; color: #333; }
+        .list-row:hover { background-color: #fff8e1; border-radius: 4px; padding-left: 10px; padding-right: 10px; margin: 0 -10px; }
+        .date-badge { background: #e8f5e9; color: #2e7d32; padding: 4px 10px; border-radius: 4px; font-size: 14px; font-weight: bold; margin-right: 15px; border: 1px solid #c8e6c9; }
+        .title { flex-grow: 1; font-size: 15px; color: #333; }
         .dl-btn { background: #4caf50; color: white; text-decoration: none; padding: 6px 15px; border-radius: 4px; font-size: 14px; transition: background 0.2s; white-space: nowrap; margin-left: 15px; }
         .dl-btn:hover { background: #ff9800; }
     </style>
 </head>
 <body>
-    <div class="list-container" id="minutes-list"></div>
+    <div class="container" id="accordion-container"></div>
     <script src="../data.js"></script>
     <script>
-        const container = document.getElementById('minutes-list');
+        const container = document.getElementById('accordion-container');
+        
+        // 1. 將資料依「學年度」分組
+        const groups = {};
         MINUTES_DATABASE.forEach(item => {
-            container.innerHTML += `
+            // 從標題中提取 "114學年度" 這種關鍵字，若無則歸為 "其他年度"
+            const match = item.title.match(/(1\d{2}學年度)/);
+            const yearGroup = match ? match[1] : "其他年度";
+            
+            if (!groups[yearGroup]) groups[yearGroup] = [];
+            groups[yearGroup].push(item);
+        });
+
+        // 2. 將分組好的資料渲染成折疊面板
+        Object.keys(groups).sort((a, b) => b.localeCompare(a)).forEach((year, index) => {
+            // 預設展開第一組（最新的學年度）
+            const isOpen = index === 0 ? "open" : "";
+            let itemsHtml = groups[year].map(item => `
                 <div class="list-row">
                     <div class="date-badge">${item.date}</div>
                     <div class="title">${item.title}</div>
-                    <a href="${item.file}" target="_blank" class="dl-btn">下載</a>
+                    <a href="${item.file}" target="_blank" class="dl-btn">下載 / 開啟</a>
                 </div>
+            `).join('');
+
+            container.innerHTML += `
+                <details ${isOpen}>
+                    <summary>${year} 會議紀錄</summary>
+                    <div class="content-area">${itemsHtml}</div>
+                </details>
             `;
         });
     </script>
