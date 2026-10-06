@@ -3,43 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <title>會訊線上閱讀</title>
+    <!-- 引入翻書效果套件 PageFlip -->
+    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
     <style>
         body { font-family: sans-serif; padding: 30px 20px; background-color: transparent; margin: 0; }
+        
+        /* 列表視圖樣式 */
         .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
         .book-card { background: #fff; padding: 15px; border-radius: 8px; border-bottom: 4px solid #4caf50; box-shadow: 0 3px 8px rgba(0,0,0,0.08); text-align: center; cursor: pointer; transition: transform 0.2s; }
         .book-card:hover { transform: translateY(-4px); border-bottom-color: #ff9800; }
         .book-cover { width: 100%; height: auto; object-fit: cover; aspect-ratio: 1 / 1.4; border-radius: 4px; margin-bottom: 12px; border: 1px solid #eee; }
         .book-title { font-weight: bold; color: #333; font-size: 15px; }
         
-        #reader-view { display: none; text-align: center; max-width: 900px; margin: 0 auto; }
-        .page-img { max-width: 100%; height: auto; margin-bottom: 20px; box-shadow: 0 3px 12px rgba(0,0,0,0.15); border-radius: 4px; border: 1px solid #ccc; }
-        .back-btn { background-color: #ff9800; color: white; padding: 10px 24px; border-radius: 6px; border: none; cursor: pointer; margin-bottom: 25px; font-weight: bold; font-size: 16px; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        /* 閱讀器視圖樣式 */
+        #reader-view { display: none; text-align: center; width: 100%; height: 100%; }
+        .back-btn { background-color: #ff9800; color: white; padding: 10px 24px; border-radius: 6px; border: none; cursor: pointer; margin-bottom: 15px; font-weight: bold; font-size: 16px; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .back-btn:hover { background-color: #e65100; }
-        .reader-header { color: #1b5e20; margin-bottom: 20px; font-size: 22px; border-bottom: 2px dashed #a5d6a7; padding-bottom: 10px; display: inline-block; }
+        .reader-header { color: #1b5e20; margin-bottom: 20px; font-size: 22px; padding-bottom: 10px; display: inline-block; font-weight: bold; }
+        
+        /* 翻書區塊容器 */
+        .flipbook-container { display: flex; justify-content: center; align-items: center; width: 100%; padding-bottom: 50px; }
+        #book-container { background-color: #f4f6f8; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        
+        /* 翻頁提示文字 */
+        .hint-text { color: #666; font-size: 14px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
+    <!-- 列表模式 -->
     <div id="list-view">
         <div class="book-grid" id="book-grid"></div>
     </div>
     
+    <!-- 翻書模式 -->
     <div id="reader-view">
         <button class="back-btn" onclick="showList()">回上頁列表</button>
-        <br><h2 id="reader-title" class="reader-header"></h2>
-        <div id="reader-content"></div>
+        <br><div id="reader-title" class="reader-header"></div>
+        <div class="hint-text">💡 提示：點擊書本邊緣或使用滑鼠拖曳來翻頁</div>
+        
+        <div class="flipbook-container">
+            <!-- 這裡是 PageFlip 套件渲染的目標容器 -->
+            <div id="book-container"></div>
+        </div>
     </div>
 
     <script src="../data.js"></script>
     <script>
+        // 整理書本資料陣列
         const BOOK_DATABASE = BOOK_SETTINGS.map(book => {
             let generatedPages = [];
-            for (let i = 1; i <= book.totalPages; i++) { generatedPages.push(`../issues/${book.id}/page${i}.${book.ext}`); }
-            return { id: book.id, title: book.title, cover: `../issues/${book.id}/cover.${book.ext}`, pages: generatedPages };
+            for (let i = 1; i <= book.totalPages; i++) { 
+                generatedPages.push(`../issues/${book.id}/page${i}.${book.ext}`); 
+            }
+            return { 
+                id: book.id, 
+                title: book.title, 
+                cover: `../issues/${book.id}/cover.${book.ext}`, 
+                pages: generatedPages 
+            };
         });
 
         const gridContainer = document.getElementById('book-grid');
-        const readerContent = document.getElementById('reader-content');
+        let pageFlipInstance = null; // 儲存翻書實例
         
+        // 渲染首頁書本列表
         BOOK_DATABASE.forEach((book, index) => {
             const card = document.createElement('div');
             card.className = 'book-card';
@@ -48,21 +75,46 @@
             gridContainer.appendChild(card);
         });
 
+        // 開啟翻書模式
         function openReader(index) {
             const book = BOOK_DATABASE[index];
             document.getElementById('reader-title').textContent = book.title;
-            readerContent.innerHTML = ''; 
-            book.pages.forEach(pageSrc => {
-                const img = document.createElement('img');
-                img.src = pageSrc; img.className = 'page-img'; img.loading = 'lazy';
-                img.onerror = function() { this.style.display='none'; };
-                readerContent.appendChild(img);
-            });
+            
+            // 切換視圖
             document.getElementById('list-view').style.display = 'none';
             document.getElementById('reader-view').style.display = 'block';
             window.scrollTo(0, 0);
+
+            const container = document.getElementById('book-container');
+            container.innerHTML = ''; // 清空先前的內容
+
+            // 如果之前有打開過書，先銷毀舊實例釋放記憶體
+            if (pageFlipInstance !== null) {
+                pageFlipInstance.destroy();
+            }
+
+            // 初始化 PageFlip 實例
+            pageFlipInstance = new St.PageFlip(container, {
+                width: 400,            // 書本單頁寬度
+                height: 565,           // 書本單頁高度
+                size: "stretch",       // 讓書本適應螢幕大小
+                minWidth: 315,
+                maxWidth: 500,
+                minHeight: 420,
+                maxHeight: 700,
+                showCover: true,       // 首頁顯示為單頁封面
+                mobileScrollSupport: false, // 停用移動端預設滾動以支援翻頁滑動
+                maxShadowOpacity: 0.5  // 翻頁陰影深度
+            });
+
+            // 將「封面」加上所有「內頁」組成完整陣列載入
+            const allImagesToLoad = [book.cover, ...book.pages];
+            
+            // 載入圖片並生成電子書
+            pageFlipInstance.loadFromImages(allImagesToLoad);
         }
 
+        // 返回列表模式
         function showList() {
             document.getElementById('reader-view').style.display = 'none';
             document.getElementById('list-view').style.display = 'block';
