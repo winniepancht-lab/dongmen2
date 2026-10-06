@@ -1,40 +1,35 @@
-<!doctype html>
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none';">
-  <title>會議紀錄查詢｜東門國小家長會</title>
-  <link rel="stylesheet" href="../assets/css/site.css">
+    <meta charset="UTF-8">
+    <title>會議紀錄</title>
+    <style>
+        body { font-family: sans-serif; padding: 30px 20px; background-color: transparent; margin: 0; }
+        .list-container { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden; }
+        .list-row { display: flex; align-items: center; padding: 15px 20px; border-bottom: 1px dashed #ddd; transition: background 0.2s; }
+        .list-row:nth-child(even) { background-color: #fafafa; }
+        .list-row:hover { background-color: #fff3e0; } 
+        .list-row:last-child { border-bottom: none; }
+        .date-badge { background: #e8f5e9; color: #2e7d32; padding: 5px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; margin-right: 20px; border: 1px solid #c8e6c9; }
+        .title { flex-grow: 1; font-size: 16px; color: #333; }
+        .dl-btn { background: #4caf50; color: white; text-decoration: none; padding: 6px 15px; border-radius: 4px; font-size: 14px; transition: background 0.2s; white-space: nowrap; margin-left: 15px; }
+        .dl-btn:hover { background: #ff9800; }
+    </style>
 </head>
-<body class="page-body minutes-body">
-  <a class="skip-link" href="#minutes-main">跳至主要內容</a>
-  <main id="minutes-main" class="page-wrap">
-    <header class="page-header">
-      <div><div class="eyebrow">東門國小學生家長會</div><h1>會議紀錄查詢</h1><p>沿用舊版的年度／會議類型／日期導覽與展開式議案閱讀，同時保留新版資料自動產生架構。</p></div>
-      <div class="stats" id="minute-stats" aria-label="會議紀錄統計"></div>
-    </header>
-
-    <section class="filters" aria-label="會議紀錄篩選">
-      <div class="filter-row" id="year-filters" aria-label="學年度"></div>
-      <div class="filter-row" id="type-filters" aria-label="會議類型"></div>
-    </section>
-
-    <section class="timeline-section" aria-label="日期導覽">
-      <div class="section-label">會議時間軸</div>
-      <div class="timeline" id="timeline"></div>
-    </section>
-
-    <section class="search-panel" aria-label="搜尋會議內容">
-      <label class="search-box"><span class="visually-hidden">搜尋關鍵字</span><input id="minute-search" type="search" inputmode="search" autocomplete="off" placeholder="搜尋日期、會議標題、議案與內容…"></label>
-      <div class="filter-row category-filters" id="category-filters" aria-label="議案類別"></div>
-      <div class="result-summary" id="minute-result" aria-live="polite"></div>
-    </section>
-
-    <section id="meeting-list" class="meeting-list" aria-live="polite"></section>
-  </main>
-  <script src="../data.js" defer></script>
-  <script src="../data/minutes_legacy.js" defer></script>
-  <script src="../assets/js/minutes.js" defer></script>
+<body>
+    <div class="list-container" id="minutes-list"></div>
+    <script src="../data.js"></script>
+    <script>
+        const container = document.getElementById('minutes-list');
+        MINUTES_DATABASE.forEach(item => {
+            container.innerHTML += `
+                <div class="list-row">
+                    <div class="date-badge">${item.date}</div>
+                    <div class="title">${item.title}</div>
+                    <a href="${item.file}" target="_blank" class="dl-btn">下載</a>
+                </div>
+            `;
+        });
+    </script>
 </body>
 </html>
