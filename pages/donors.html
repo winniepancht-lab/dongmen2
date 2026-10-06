@@ -5,28 +5,53 @@
     <title>捐款芳名錄</title>
     <style>
         body { font-family: sans-serif; padding: 30px 20px; background-color: transparent; margin: 0; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
-        .card { background: #fff; padding: 25px; border-radius: 8px; border: 1px solid #eee; border-top: 5px solid #ff9800; box-shadow: 0 3px 8px rgba(0,0,0,0.06); transition: transform 0.2s; }
-        .card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
-        .year { color: #fff; background: #2e7d32; display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 13px; font-weight: bold; margin-bottom: 12px; }
-        .title { font-size: 18px; color: #1b5e20; margin-bottom: 20px; font-weight: bold; line-height: 1.4; }
-        .dl-link { display: inline-flex; align-items: center; color: #e65100; text-decoration: none; font-weight: bold; background: #fff3e0; padding: 8px 16px; border-radius: 4px; font-size: 14px; border: 1px solid #ffe0b2; transition: all 0.2s; }
-        .dl-link:hover { background: #ffcc80; color: #bf360c; }
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        details { background: #fff; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e0e0e0; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        summary { padding: 16px 20px; font-size: 18px; font-weight: bold; background-color: #fff3e0; color: #e65100; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; border-radius: 8px; transition: background-color 0.2s; border-left: 5px solid #ff9800; }
+        summary:hover { background-color: #ffe0b2; }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: "▼"; font-size: 14px; color: #e65100; transition: transform 0.3s; }
+        details[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: 1px solid #ffe0b2; }
+        details[open] summary::after { transform: rotate(180deg); }
+        
+        .content-area { padding: 10px 20px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px; }
+        .donor-card { background: #fafafa; border: 1px solid #eee; padding: 15px; border-radius: 6px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; }
+        .donor-card:hover { transform: translateY(-3px); border-color: #ffcc80; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .donor-title { font-size: 16px; color: #333; font-weight: bold; margin-bottom: 15px; line-height: 1.4; }
+        .dl-link { align-self: flex-start; color: #bf360c; text-decoration: none; font-weight: bold; background: #fff8e1; padding: 6px 15px; border-radius: 4px; font-size: 13px; border: 1px solid #ffe0b2; transition: all 0.2s; }
+        .dl-link:hover { background: #ffcc80; }
     </style>
 </head>
 <body>
-    <div class="grid-container" id="donors-list"></div>
+    <div class="container" id="accordion-container"></div>
     <script src="../data.js"></script>
     <script>
-        const container = document.getElementById('donors-list');
+        const container = document.getElementById('accordion-container');
+        
+        // 1. 依「year」(學年度) 分組
+        const groups = {};
         DONORS_DATABASE.forEach(item => {
-            container.innerHTML += `
-                <div class="card">
-                    <div class="year">${item.year}</div>
-                    <div class="title">${item.title}</div>
-                    <!-- 移除硬編碼的 PDF 字眼，改為更通用的文字 -->
+            const yearGroup = item.year || "其他";
+            if (!groups[yearGroup]) groups[yearGroup] = [];
+            groups[yearGroup].push(item);
+        });
+
+        // 2. 渲染折疊面板 (內部使用卡片網格排列)
+        Object.keys(groups).sort((a, b) => b.localeCompare(a)).forEach((year, index) => {
+            const isOpen = index === 0 ? "open" : ""; // 預設展開第一組
+            let itemsHtml = groups[year].map(item => `
+                <div class="donor-card">
+                    <div class="donor-title">💝 ${item.title}</div>
                     <a href="${item.file}" target="_blank" class="dl-link">查看芳名錄</a>
                 </div>
+            `).join('');
+
+            container.innerHTML += `
+                <details ${isOpen}>
+                    <summary>${year} 芳名錄</summary>
+                    <div class="content-area">${itemsHtml}</div>
+                </details>
             `;
         });
     </script>
