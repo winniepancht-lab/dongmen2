@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>各式章程</title>
+    <style>
+        body { font-family: sans-serif; padding: 30px 20px; background-color: transparent; margin: 0; }
+        .list-container { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
+        .rule-card { background: #fff; padding: 20px 25px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; border-left: 6px solid #4caf50; transition: all 0.2s; }
+        .rule-card:hover { border-left-color: #ff9800; background: #fdfdfd; }
+        .title { font-size: 16px; color: #333; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .title::before { content: "📄"; font-size: 18px; }
+        .dl-btn { background: transparent; color: #ff9800; border: 2px solid #ff9800; text-decoration: none; padding: 6px 18px; border-radius: 4px; font-size: 14px; font-weight: bold; transition: all 0.2s; white-space: nowrap; }
+        .dl-btn:hover { background: #ff9800; color: white; }
+    </style>
+</head>
+<body>
+    <div class="list-container" id="rules-list"></div>
+    <script src="../data.js"></script>
+    <script>
+        const container = document.getElementById('rules-list');
+        RULES_DATABASE.forEach(item => {
+            container.innerHTML += `
+                <div class="rule-card">
+                    <div class="title">${item.title}</div>
+                    <a href="${item.file}" target="_blank" class="dl-btn">閱讀條文</a>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

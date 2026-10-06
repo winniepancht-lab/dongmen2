@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>會訊線上閱讀</title>
+    <style>
+        body { font-family: sans-serif; padding: 30px 20px; background-color: transparent; margin: 0; }
+        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
+        .book-card { background: #fff; padding: 15px; border-radius: 8px; border-bottom: 4px solid #4caf50; box-shadow: 0 3px 8px rgba(0,0,0,0.08); text-align: center; cursor: pointer; transition: transform 0.2s; }
+        .book-card:hover { transform: translateY(-4px); border-bottom-color: #ff9800; }
+        .book-cover { width: 100%; height: auto; object-fit: cover; aspect-ratio: 1 / 1.4; border-radius: 4px; margin-bottom: 12px; border: 1px solid #eee; }
+        .book-title { font-weight: bold; color: #333; font-size: 15px; }
+        
+        #reader-view { display: none; text-align: center; max-width: 900px; margin: 0 auto; }
+        .page-img { max-width: 100%; height: auto; margin-bottom: 20px; box-shadow: 0 3px 12px rgba(0,0,0,0.15); border-radius: 4px; border: 1px solid #ccc; }
+        .back-btn { background-color: #ff9800; color: white; padding: 10px 24px; border-radius: 6px; border: none; cursor: pointer; margin-bottom: 25px; font-weight: bold; font-size: 16px; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .back-btn:hover { background-color: #e65100; }
+        .reader-header { color: #1b5e20; margin-bottom: 20px; font-size: 22px; border-bottom: 2px dashed #a5d6a7; padding-bottom: 10px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div id="list-view">
+        <div class="book-grid" id="book-grid"></div>
+    </div>
+    
+    <div id="reader-view">
+        <button class="back-btn" onclick="showList()">回上頁列表</button>
+        <br><h2 id="reader-title" class="reader-header"></h2>
+        <div id="reader-content"></div>
+    </div>
+
+    <script src="../data.js"></script>
+    <script>
+        const BOOK_DATABASE = BOOK_SETTINGS.map(book => {
+            let generatedPages = [];
+            for (let i = 1; i <= book.totalPages; i++) { generatedPages.push(`../issues/${book.id}/page${i}.${book.ext}`); }
+            return { id: book.id, title: book.title, cover: `../issues/${book.id}/cover.${book.ext}`, pages: generatedPages };
+        });
+
+        const gridContainer = document.getElementById('book-grid');
+        const readerContent = document.getElementById('reader-content');
+        
+        BOOK_DATABASE.forEach((book, index) => {
+            const card = document.createElement('div');
+            card.className = 'book-card';
+            card.onclick = () => openReader(index);
+            card.innerHTML = `<img src="${book.cover}" class="book-cover" onerror="this.src='https://via.placeholder.com/200x280?text=無封面圖'"><div class="book-title">${book.title}</div>`;
+            gridContainer.appendChild(card);
+        });
+
+        function openReader(index) {
+            const book = BOOK_DATABASE[index];
+            document.getElementById('reader-title').textContent = book.title;
+            readerContent.innerHTML = ''; 
+            book.pages.forEach(pageSrc => {
+                const img = document.createElement('img');
+                img.src = pageSrc; img.className = 'page-img'; img.loading = 'lazy';
+                img.onerror = function() { this.style.display='none'; };
+                readerContent.appendChild(img);
+            });
+            document.getElementById('list-view').style.display = 'none';
+            document.getElementById('reader-view').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function showList() {
+            document.getElementById('reader-view').style.display = 'none';
+            document.getElementById('list-view').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>

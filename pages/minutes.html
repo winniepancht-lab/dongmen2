@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>會議紀錄</title>
+    <style>
+        body { font-family: sans-serif; padding: 30px 20px; background-color: transparent; margin: 0; }
+        .list-container { max-width: 900px; margin: 0 auto; background: #fff; border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 2px 6px rgba(0,0,0,0.05); overflow: hidden; }
+        .list-row { display: flex; align-items: center; padding: 15px 20px; border-bottom: 1px dashed #ddd; transition: background 0.2s; }
+        .list-row:nth-child(even) { background-color: #fafafa; }
+        .list-row:hover { background-color: #fff3e0; } /* 溫暖的橘色懸停效果 */
+        .list-row:last-child { border-bottom: none; }
+        .date-badge { background: #e8f5e9; color: #2e7d32; padding: 5px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; margin-right: 20px; border: 1px solid #c8e6c9; }
+        .title { flex-grow: 1; font-size: 16px; color: #333; }
+        .dl-btn { background: #4caf50; color: white; text-decoration: none; padding: 6px 15px; border-radius: 4px; font-size: 14px; transition: background 0.2s; white-space: nowrap; margin-left: 15px; }
+        .dl-btn:hover { background: #ff9800; }
+    </style>
+</head>
+<body>
+    <div class="list-container" id="minutes-list"></div>
+    <script src="../data.js"></script>
+    <script>
+        const container = document.getElementById('minutes-list');
+        MINUTES_DATABASE.forEach(item => {
+            container.innerHTML += `
+                <div class="list-row">
+                    <div class="date-badge">${item.date}</div>
+                    <div class="title">${item.title}</div>
+                    <a href="${item.file}" target="_blank" class="dl-btn">下載</a>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

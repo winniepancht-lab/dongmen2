@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>捐款芳名錄</title>
+    <style>
+        body { font-family: sans-serif; padding: 30px 20px; background-color: transparent; margin: 0; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
+        .card { background: #fff; padding: 25px; border-radius: 8px; border: 1px solid #eee; border-top: 5px solid #ff9800; box-shadow: 0 3px 8px rgba(0,0,0,0.06); transition: transform 0.2s; }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        .year { color: #fff; background: #2e7d32; display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 13px; font-weight: bold; margin-bottom: 12px; }
+        .title { font-size: 18px; color: #1b5e20; margin-bottom: 20px; font-weight: bold; line-height: 1.4; }
+        .dl-link { display: inline-flex; align-items: center; color: #e65100; text-decoration: none; font-weight: bold; background: #fff3e0; padding: 8px 16px; border-radius: 4px; font-size: 14px; border: 1px solid #ffe0b2; transition: all 0.2s; }
+        .dl-link:hover { background: #ffcc80; color: #bf360c; }
+    </style>
+</head>
+<body>
+    <div class="grid-container" id="donors-list"></div>
+    <script src="../data.js"></script>
+    <script>
+        const container = document.getElementById('donors-list');
+        DONORS_DATABASE.forEach(item => {
+            container.innerHTML += `
+                <div class="card">
+                    <div class="year">${item.year}</div>
+                    <div class="title">${item.title}</div>
+                    <a href="${item.file}" target="_blank" class="dl-link">查看芳名錄 PDF</a>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
