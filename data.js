@@ -3,7 +3,7 @@
 
 window.SITE_CONFIG = {
   "siteTitle": "東門國小學生家長會",
-  "academicYear": 114-115,
+  "academicYear": 114,
   "school": "臺北市中正區東門國民小學"
 };
 
